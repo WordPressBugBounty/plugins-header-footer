@@ -1,7 +1,7 @@
 === Head, Footer and Post Injections ===
 Tags: header, footer, ads, analytics, amp
-Tested up to: 6.7.2
-Stable tag: 3.3.2
+Tested up to: 6.9
+Stable tag: 3.3.3
 Donate link: https://www.satollo.net/donations
 Contributors: satollo
 License: GPLv2 or later
@@ -83,6 +83,11 @@ FAQs are answered on [Header and Footer](http://www.satollo.net/plugins/header-f
 
 
 == Changelog ==
+
+= 3.3.3 =
+
+* WP 6.9 check
+* PCP Check
 
 = 3.3.1, 3.3.2 =
 

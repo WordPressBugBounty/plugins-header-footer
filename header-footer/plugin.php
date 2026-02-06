@@ -1,36 +1,19 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /*
   Plugin Name: Head, Footer and Post Injections
   Plugin URI: https://www.satollo.net/plugins/header-footer
   Description: Header and Footer lets to add html/javascript code to the head and footer and posts of your blog. Some examples are provided on the <a href="http://www.satollo.net/plugins/header-footer">official page</a>.
-  Version: 3.3.2
+  Version: 3.3.3
   Requires PHP: 7.0
-  Requires at least: 5.6
+  Requires at least: 6.1
   Author: Stefano Lissa
   Author URI: https://www.satollo.net
   Disclaimer: Use at your own risk. No warranty expressed or implied is provided.
  */
 
-/*
-  Copyright 2008-2024 Stefano Lissa (stefano@satollo.net)
-
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
-
-defined('ABSPATH') || exit;
 
 if (!defined('HEADER_FOOTER_ALLOW_PHP')) {
     define('HEADER_FOOTER_ALLOW_PHP', true);
@@ -159,11 +142,11 @@ function hefo_wp_head_pre() {
     }
 
     if (isset($hefo_options['disable_wp_shortlink_wp_head'])) {
-        remove_action('wp_head', 'wp_shortlink_wp_head', 10, 0);
+        remove_action('wp_head', 'wp_shortlink_wp_head', 10);
     }
 
     if (isset($hefo_options['disable_wp_shortlink_wp_head'])) {
-        remove_action('wp_head', 'wp_shortlink_wp_head', 10, 0);
+        remove_action('wp_head', 'wp_shortlink_wp_head', 10);
     }
 }
 
@@ -178,7 +161,7 @@ function hefo_wp_head_post() {
 }
 
 add_action('amp_post_template_head', function () {
-    echo hefo_execute_option('amp_head', true);
+    hefo_execute_option('amp_head', true);
 }, 100);
 
 add_action('amp_post_template_css', function () {
@@ -196,7 +179,7 @@ add_action('amp_post_template_footer', function () {
 add_action('wp_footer', 'hefo_wp_footer');
 
 function hefo_wp_footer() {
-    global $hefo_is_mobile;
+    global $hefo_is_mobile, $hefo_options;
 
     if ($hefo_is_mobile && isset($hefo_options['mobile_footer_enabled'])) {
         hefo_execute_option('mobile_footer', true);
@@ -380,6 +363,7 @@ function hefo_execute_option($key, $echo = false) {
         return '';
     $buffer = hefo_replace($hefo_options[$key]);
     if ($echo)
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         echo hefo_execute($buffer);
     else
         return hefo_execute($buffer);
