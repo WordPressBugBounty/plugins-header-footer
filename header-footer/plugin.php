@@ -6,7 +6,7 @@ defined('ABSPATH') || exit;
   Plugin Name: Head, Footer and Post Injections
   Plugin URI: https://www.satollo.net/plugins/header-footer
   Description: Header and Footer lets to add html/javascript code to the head and footer and posts of your blog. Some examples are provided on the <a href="http://www.satollo.net/plugins/header-footer">official page</a>.
-  Version: 3.3.3
+  Version: 3.3.4
   Requires PHP: 7.0
   Requires at least: 6.1
   Author: Stefano Lissa
@@ -81,17 +81,12 @@ add_action('template_redirect', 'hefo_template_redirect', 1);
 $hefo_body_block = '';
 $hefo_generic_block = array();
 
+// This is used only for the generaic replacements, probably no one is using...
 function hefo_template_redirect() {
     global $hefo_body_block, $hefo_generic_block, $hefo_options, $hefo_is_mobile;
 
     if (function_exists('is_amp_endpoint') && is_amp_endpoint()) {
         return;
-    }
-
-    if ($hefo_is_mobile && isset($hefo_options['mobile_body_enabled'])) {
-        $hefo_body_block = hefo_execute_option('mobile_body');
-    } else {
-        $hefo_body_block = hefo_execute_option('body');
     }
 
     for ($i = 1; $i <= 5; $i++) {
@@ -102,7 +97,9 @@ function hefo_template_redirect() {
         }
     }
 
-    ob_start('hefo_callback');
+    if ($hefo_generic_block) {
+        ob_start('hefo_callback');
+    }
 }
 
 function hefo_callback($buffer) {
@@ -112,17 +109,27 @@ function hefo_callback($buffer) {
         if (isset($hefo_options['generic_tag_' . $i]))
             hefo_insert_before($buffer, $hefo_generic_block[$i], $hefo_options['generic_tag_' . $i]);
     }
-    $x = strpos($buffer, '<body');
-    if ($x === false) {
-        return $buffer;
-    }
-    $x = strpos($buffer, '>', $x);
-    if ($x === false) {
-        return $buffer;
-    }
-    $x++;
-    return substr($buffer, 0, $x) . "\n" . $hefo_body_block . substr($buffer, $x);
+   
+    return $buffer;
 }
+
+add_action('wp_body_open', function () {
+    global $hefo_body_block, $hefo_options, $hefo_is_mobile;
+    
+    // Amp pages have their own wp_body_open, I don't know if this hook is called on AMP context, but...
+    if (function_exists('is_amp_endpoint') && is_amp_endpoint()) {
+        return;
+    }
+    
+    if ($hefo_is_mobile && isset($hefo_options['mobile_body_enabled'])) {
+        $hefo_body_block = hefo_execute_option('mobile_body');
+    } else {
+        $hefo_body_block = hefo_execute_option('body');
+    }
+    echo $hefo_body_block;
+});
+
+
 
 add_action('wp_head', 'hefo_wp_head_pre', 1);
 
@@ -252,7 +259,7 @@ function hefo_the_content($content) {
         if (empty($skip)) {
             $skip = 0;
         } else if (substr($skip, -1) == '%') {
-            $skip = (intval($skip) * strlen($content) / 100);
+            $skip = intval(round((intval($skip) * strlen($content) / 100)));
         }
 
         if ($hefo_options['inner_pos_' . $i] == 'after') {
@@ -363,7 +370,7 @@ function hefo_execute_option($key, $echo = false) {
         return '';
     $buffer = hefo_replace($hefo_options[$key]);
     if ($echo)
-        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         echo hefo_execute($buffer);
     else
         return hefo_execute($buffer);

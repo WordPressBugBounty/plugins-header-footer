@@ -67,11 +67,11 @@ if (isset($_POST['save'])) {
         jQuery("#hefo-tabs").tabs();
     });
 </script>
-
+<?php include __DIR__ . '/menu.php'; ?>
 <div class="wrap">
     <!--https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5PHGDGNHAYLJ8-->
 
-    <h2>Head, Footer and Post Injections</h2>
+<!--    <h2>Head, Footer and Post Injections</h2>-->
 
     <?php if (!isset($dismissed['rate'])) { ?>
         <div class="notice notice-success">
@@ -113,11 +113,11 @@ if (isset($_POST['save'])) {
 
     <div class="notice notice-success">
         Did this plugin save you lot of time and troubles?
-        <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5PHGDGNHAYLJ8" target="_blank"><img style="vertical-align: bottom" src="<?= esc_attr(plugins_url('header-footer')) ?>/images/donate.png"></a>
+        <a href="https://www.paypal.com/donate/?hosted_button_id=5PHGDGNHAYLJ8" target="_blank"><img style="vertical-align: bottom" src="<?= esc_attr(plugins_url('header-footer')) ?>/images/donate.png"></a>
         To help children. Even <b>2$</b> help. <a href="http://www.satollo.net/donations" target="_blank">Please read more</a>. Thank you.
         <br>
         Are you profitably using this free plugin for your customers? One more reason to consider a
-        <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5PHGDGNHAYLJ8" target="_blank">donation</a>. Thank you.
+        <a href="https://www.paypal.com/donate/?hosted_button_id=5PHGDGNHAYLJ8" target="_blank">donation</a>. Thank you.
     </div>
 
     <div style="padding: 15px; background-color: #fff; border: 1px solid #eee; font-size: 16px; line-height: 22px">
